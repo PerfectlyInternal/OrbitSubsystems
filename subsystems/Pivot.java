@@ -22,9 +22,6 @@ public class Pivot extends SubsystemBase {
 
         // Generic config constants
         public boolean dualMotor; // Are we using two motors? 
-        public boolean directionalMotionProfiles; // Do we want to use separate up/down motion profiles? (for big loads)
-        public boolean useHoldPID; // Do we have a dedicated hold PID? 
-
         // Motor config
         // You can either set the motors directly and pre-configure them, or use builtin config options
         public int masterID, slaveID; 
@@ -38,18 +35,7 @@ public class Pivot extends SubsystemBase {
         public double encoderOffset;
         public AnalogEncoder absoluteEncoder;
 
-        // Motion profiles, up is used by default if you only have one set
-        // Set like motors
-        public double upMaxSpeed, upMaxAccel, downMaxSpeed, downMaxAccel;
-        public TrapezoidProfile.Constraints upMotionProfileConstraints, downMotionProfileConstraints; 
-
-        // PIDF controllers
-        public OrbitPID movePIDController, holdPIDController;
-        public ArmFeedforward feedForward;  
-
-        public DoubleSupplier manualOffset;
-        public BooleanSupplier manualOffsetEnable;
-    }
+   }
 
     private PivotConfig config;
 
@@ -98,7 +84,11 @@ public class Pivot extends SubsystemBase {
         double newPosition = config.absoluteEncoder.getPosition() - config.encoderOffset;
         config.master.getEncoder.setPosition(newPosition);
     }
-    
+
+    public double getSpeed() {
+        return this.angularVelocity;
+    }
+
     private void updateSpeed() {
         long currentTime = System.currentTimeMillis();
         double deltaTime = (currentTime - lastTime) / 1000.0;
